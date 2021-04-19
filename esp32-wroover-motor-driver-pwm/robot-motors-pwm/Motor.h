@@ -51,13 +51,13 @@ class MotorImpl : public Motor
 
     virtual void setSpeed(int speed) override
     {
+      this->speed = speed;
       analogWrite(pwm, speed);
     }
 
     virtual int getSpeed() const override
     {
-      // TODO
-      return 0;
+      return speed;
     }
 
     virtual void turnOff() override
@@ -70,6 +70,7 @@ class MotorImpl : public Motor
     const int in1;
     const int in2;
     const int pwm;
+    int speed = 0;
 
     void setClockwiseDirection()
     {
