@@ -14,6 +14,7 @@ class Motor
 {
   public:
     virtual void setDirection(MotorDirection direction) = 0;
+    virtual MotorDirection getDirection() const;
     virtual void setSpeed(int speed) = 0;
     virtual int getSpeed() const = 0;
     virtual void turnOff() = 0;
@@ -49,6 +50,11 @@ class MotorImpl : public Motor
       }
     }
 
+    virtual MotorDirection getDirection() const override
+    {
+      return direction;
+    }
+
     virtual void setSpeed(int speed) override
     {
       this->speed = speed;
@@ -71,17 +77,20 @@ class MotorImpl : public Motor
     const int in2;
     const int pwm;
     int speed = 0;
+    MotorDirection direction;
 
     void setClockwiseDirection()
     {
       digitalWrite(in1, HIGH);
       digitalWrite(in2, LOW);
+      direction = MotorDirection::CLOCKWISE;
     }
 
     void setCounterClockwiseDirection()
     {
       digitalWrite(in1, LOW);
       digitalWrite(in2, HIGH);
+      direction = MotorDirection::COUNTER_CLOCKWISE;
     }
 };
 
