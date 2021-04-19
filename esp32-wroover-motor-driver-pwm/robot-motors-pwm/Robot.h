@@ -1,44 +1,60 @@
 #ifndef ROBOT_H
 #define ROBOT_H
 
+#include <Arduino.h>
 #include "Motor.h"
+#include <memory>
+
+enum class RobotSpeed
+{
+  SLOW,
+  NORMAL,
+  FAST
+};
 
 class Robot
 {
   public:
-    virtual void moveForward(int speed) = 0;
-    virtual void moveBackward(int speed) = 0;
-    virtual void turnRight(int degrees) = 0;
-    virtual void turnLeft(int degrees) = 0;
+    virtual void moveForward(RobotSpeed speed) = 0;
+    virtual void moveBackward(RobotSpeed speed) = 0;
+    virtual void turnRight(int degrees = 90) = 0;
+    virtual void turnLeft(int degrees = 90) = 0;
     virtual void stopMoving() = 0;
     virtual bool isMoving() = 0;
     virtual bool isNotMoving() = 0;
 };
 
-// For slow movement, good speed is 110
 class RobotImpl : public Robot
 {
   public:
-    virtual void moveForward(int speed) override
+    explicit RobotImpl(std::unique_ptr<Motor> motorA, std::unique_ptr<Motor> motorB)
+      : motorA{std::move(motorA)}, motorB{std::move(motorB)}
+    {}
+
+    virtual void moveForward(RobotSpeed speed) override
     {
       configureMotorsForForwardMotion();
       setMotorsSpeed(speed);
     }
 
-    virtual void moveBackward(int speed) override
+    virtual void moveBackward(RobotSpeed speed) override
     {
       configureMotorsForBackwardMotion();
       setMotorsSpeed(speed);
     }
 
-    virtual void turnRight(int degrees) override
+    virtual void turnRight(int degrees = 90) override
     {
-
+      motorA->setSpeed(110);
+      delay(5000);
+      motorA->turnOff();
     }
 
-    virtual void turnLeft(int degrees) override
+    virtual void turnLeft(int degrees = 90) override
     {
-
+      motorB->setSpeed(110);
+      delay(5000);
+      motorB->turnOff();
     }
 
     virtual void stopMoving() override
@@ -58,31 +74,53 @@ class RobotImpl : public Robot
     }
 
   private:
-    Motor motorA{26, 27, 14};
-    Motor motorB{32, 33, 25};
+    std::unique_ptr<Motor> motorA;
+    std::unique_ptr<Motor> motorB;
 
     void configureMotorsForForwardMotion()
     {
-      motorA.setDirection(MotorDirection::CLOCKWISE);
-      motorB.setDirection(MotorDirection::COUNTER_CLOCKWISE);
+      motorA->setDirection(MotorDirection::CLOCKWISE);
+      motorB->setDirection(MotorDirection::CLOCKWISE);
     }
 
     void configureMotorsForBackwardMotion()
     {
-      motorA.setDirection(MotorDirection::COUNTER_CLOCKWISE);
-      motorB.setDirection(MotorDirection::CLOCKWISE);
+      motorA->setDirection(MotorDirection::COUNTER_CLOCKWISE);
+      motorB->setDirection(MotorDirection::COUNTER_CLOCKWISE);
     }
 
     void turnMotorsOff()
     {
-      motorA.turnOff();
-      motorB.turnOff();
+      motorA->turnOff();
+      motorB->turnOff();
+    }
+
+    void setMotorsSpeed(RobotSpeed speed)
+    {
+      switch (speed)
+      {
+        case RobotSpeed::SLOW:
+          {
+            setMotorsSpeed(50);
+            break;
+          }
+        case RobotSpeed::NORMAL:
+          {
+            setMotorsSpeed(110);
+            break;
+          }
+        case RobotSpeed::FAST:
+          {
+            setMotorsSpeed(200);
+            break;
+          }
+      }
     }
 
     void setMotorsSpeed(int speed)
     {
-      motorA.setSpeed(speed);
-      motorB.setSpeed(speed);
+      motorA->setSpeed(speed);
+      motorB->setSpeed(speed);
     }
 };
 

@@ -13,13 +13,26 @@ enum class MotorDirection
 class Motor
 {
   public:
-    Motor(int in1, int in2, int pwm) : in1{in1}, in2{in2}, pwm{pwm}
+    virtual void setDirection(MotorDirection direction) = 0;
+    virtual void setSpeed(int speed) = 0;
+    virtual int getSpeed() const = 0;
+    virtual void turnOff() = 0;
+};
+
+class MotorImpl : public Motor
+{
+  public:
+    explicit MotorImpl(int in1, int in2, int pwm) : in1{in1}, in2{in2}, pwm{pwm}
     {
-      Serial.println("Configuring motor pins...");
-      configurePins();
+      Serial.print("Creating motor with in1 = ");
+      Serial.print(in1);
+      Serial.print("; in2 = ");
+      Serial.print(in2);
+      Serial.print("; pwm = ");
+      Serial.println(pwm);
     }
 
-    void setDirection(MotorDirection direction)
+    virtual void setDirection(MotorDirection direction) override
     {
       switch (direction)
       {
@@ -36,12 +49,18 @@ class Motor
       }
     }
 
-    void setSpeed(int speed)
+    virtual void setSpeed(int speed) override
     {
       analogWrite(pwm, speed);
     }
 
-    void turnOff()
+    virtual int getSpeed() const override
+    {
+      // TODO
+      return 0;
+    }
+
+    virtual void turnOff() override
     {
       digitalWrite(in1, LOW);
       digitalWrite(in2, LOW);
@@ -62,13 +81,6 @@ class Motor
     {
       digitalWrite(in1, LOW);
       digitalWrite(in2, HIGH);
-    }
-
-    void configurePins()
-    {
-      pinMode(in1, OUTPUT);
-      pinMode(in2, OUTPUT);
-      pinMode(pwm, OUTPUT);
     }
 };
 
