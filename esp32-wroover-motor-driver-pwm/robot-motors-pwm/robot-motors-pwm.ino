@@ -26,7 +26,7 @@ void setup()
   pinMode(MOTOR_PWM_B, OUTPUT);
   robot = std::unique_ptr<Robot>(new RobotImpl(
                                    std::unique_ptr<Motor>(new MotorImpl{MOTOR_IN_A1, MOTOR_IN_A2, MOTOR_PWM_A}),
-                                   std::unique_ptr<Motor>(new MotorImpl{MOTOR_IN_B2, MOTOR_IN_B1, MOTOR_PWM_B})));
+                                   std::unique_ptr<Motor>(new MotorImpl{MOTOR_IN_B1, MOTOR_IN_B2, MOTOR_PWM_B})));
 }
 
 void loop()
