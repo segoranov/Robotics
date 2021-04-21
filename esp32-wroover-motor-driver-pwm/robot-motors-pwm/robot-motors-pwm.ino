@@ -3,6 +3,7 @@
 #include <memory>
 
 #include "Robot.h"
+#include "MotorFactory.h"
 
 std::unique_ptr<Robot> robot;
 
@@ -25,8 +26,8 @@ void setup()
   pinMode(MOTOR_IN_B2, OUTPUT);
   pinMode(MOTOR_PWM_B, OUTPUT);
   robot = std::unique_ptr<Robot>(new RobotImpl(
-                                   std::unique_ptr<Motor>(new MotorImpl{MOTOR_IN_A1, MOTOR_IN_A2, MOTOR_PWM_A}),
-                                   std::unique_ptr<Motor>(new MotorImpl{MOTOR_IN_B1, MOTOR_IN_B2, MOTOR_PWM_B})));
+                                   motor_factory::create(MotorDriverType::DUAL_DC, MOTOR_IN_A1, MOTOR_IN_A2, MOTOR_PWM_A),
+                                   motor_factory::create(MotorDriverType::DUAL_DC, MOTOR_IN_B1, MOTOR_IN_B2, MOTOR_PWM_B)));
 }
 
 void loop()

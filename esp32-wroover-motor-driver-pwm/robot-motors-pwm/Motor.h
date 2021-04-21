@@ -10,6 +10,11 @@ enum class MotorDirection
   COUNTER_CLOCKWISE
 };
 
+enum class MotorDriverType
+{
+    DUAL_DC
+};
+
 class Motor
 {
   public:
